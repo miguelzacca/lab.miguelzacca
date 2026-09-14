@@ -1,0 +1,30 @@
+{
+  "name": "miguel-zakaleb-formulation-lab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Private scientific formulation workspace",
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env.local server.js",
+    "start": "node server.js",
+    "build": "prisma generate && node scripts/build.mjs",
+    "test": "node --test tests",
+    "db:guard": "node scripts/assert-lab-database.mjs",
+    "db:migrate": "node scripts/assert-lab-database.mjs && prisma migrate deploy",
+    "db:verify": "node scripts/verify-database.mjs",
+    "prisma:validate": "prisma validate",
+    "prisma:generate": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
+    "dotenv": "^17.4.2",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "prisma": "7.10.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

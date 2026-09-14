@@ -1,0 +1,10 @@
+node_modules
+.tmp/
+.env
+.env.local
+.vercel
+generated/
+public/assets/
+coverage/
+output/
+.vercel

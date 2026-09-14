@@ -1,0 +1,371 @@
+.document-page {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 210 / 297;
+  min-height: 0;
+  padding: 7.2% 7.8% 6.6%;
+  overflow: hidden;
+  color: #1b2226;
+  background: #fffefa;
+  box-shadow: var(--shadow-paper);
+  font-family: var(--font-sans);
+  container-type: inline-size;
+}
+
+.document-page.compact {
+  padding-top: 6.2%;
+}
+
+.document-page.page-letter {
+  aspect-ratio: 216 / 279;
+}
+
+.doc-header {
+  display: grid;
+  grid-template-columns: 8% 1fr auto;
+  gap: 3%;
+  align-items: center;
+  padding-bottom: 3.2%;
+  border-bottom: 1px solid #9fa5a6;
+}
+
+.doc-mark {
+  display: grid;
+  aspect-ratio: 1;
+  place-items: center;
+  color: #fffefa;
+  background: #1d282e;
+  font-size: 1.8cqw;
+  font-weight: 700;
+  letter-spacing: -.08em;
+}
+
+.doc-brand {
+  font-size: 1.15cqw;
+  line-height: 1.35;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.doc-brand strong {
+  display: block;
+  font-size: 1.35cqw;
+  letter-spacing: .08em;
+}
+
+.doc-control {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: .8cqw 2.2cqw;
+  font-size: 1.05cqw;
+  font-variant-numeric: tabular-nums;
+}
+
+.doc-control span {
+  color: #70797d;
+  font-size: .75cqw;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.doc-hero {
+  display: grid;
+  grid-template-columns: 1fr 27%;
+  gap: 5%;
+  padding: 7% 0 5.5%;
+}
+
+.doc-hero.no-cover {
+  grid-template-columns: 1fr;
+}
+
+.doc-kicker {
+  margin-bottom: 2.2%;
+  color: #315f87;
+  font-size: .82cqw;
+  font-weight: 650;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.doc-kicker span {
+  display: block;
+  margin-top: .55cqw;
+  color: #7b8385;
+  font-size: .62cqw;
+  letter-spacing: .13em;
+}
+
+.doc-title {
+  max-width: 76%;
+  margin: 0 0 2.2%;
+  font-family: var(--font-serif);
+  font-size: 4cqw;
+  font-weight: 500;
+  letter-spacing: -.045em;
+  line-height: .98;
+}
+
+.doc-subtitle {
+  margin: 0;
+  color: #667176;
+  font-size: 1.35cqw;
+  line-height: 1.5;
+}
+
+.doc-cover {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #ebe9e2;
+}
+
+.doc-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(.84);
+}
+
+.doc-overview {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-bottom: 5%;
+  border-top: 1px solid #aeb3b4;
+  border-bottom: 1px solid #aeb3b4;
+}
+
+.doc-meta {
+  min-height: 5.7cqw;
+  padding: 1.3cqw 1.1cqw;
+  border-right: 1px solid #d6d8d7;
+}
+
+.doc-meta:last-child {
+  border-right: 0;
+}
+
+.doc-meta span {
+  display: block;
+  margin-bottom: .7cqw;
+  color: #768084;
+  font-size: .7cqw;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.doc-meta strong {
+  font-size: 1.12cqw;
+  font-weight: 550;
+}
+
+.doc-section {
+  margin-top: 4.4%;
+  break-inside: avoid;
+}
+
+.doc-section-heading {
+  display: grid;
+  grid-template-columns: 4.4cqw 1fr;
+  gap: 1.3cqw;
+  align-items: baseline;
+  padding-bottom: 1.2%;
+  border-bottom: 1px solid #222d32;
+}
+
+.doc-section-heading span {
+  color: #315f87;
+  font-size: .78cqw;
+  font-variant-numeric: tabular-nums;
+}
+
+.doc-section-heading h2 {
+  margin: 0;
+  font-size: 1cqw;
+  font-weight: 680;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .92cqw;
+}
+
+.doc-table th {
+  padding: 1.1cqw .75cqw;
+  border-bottom: 1px solid #c8cccb;
+  color: #687276;
+  font-size: .67cqw;
+  font-weight: 650;
+  letter-spacing: .1em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.doc-table td {
+  padding: 1.1cqw .75cqw;
+  border-bottom: 1px solid #e0e1de;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.doc-table td > span,
+.doc-synonyms {
+  color: #707a7d;
+  font-size: .76cqw;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+.doc-table .number {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.doc-table tfoot td {
+  border-top: 1px solid #222d32;
+  border-bottom: 0;
+  font-weight: 650;
+}
+
+.doc-quant {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid #adb3b3;
+}
+
+.doc-quant-item {
+  padding: 1.5cqw 1.1cqw;
+  border-right: 1px solid #d8dad8;
+}
+
+.doc-quant-item:last-child {
+  border-right: 0;
+}
+
+.doc-quant-item span {
+  display: block;
+  margin-bottom: .6cqw;
+  color: #778084;
+  font-size: .65cqw;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.doc-quant-item strong {
+  font-family: var(--font-serif);
+  font-size: 2.2cqw;
+  font-weight: 480;
+  font-variant-numeric: tabular-nums;
+}
+
+.doc-definition-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+}
+
+.doc-definition {
+  min-height: 5cqw;
+  padding: 1.2cqw .8cqw;
+  border-bottom: 1px solid #dcddda;
+}
+
+.doc-definition:nth-child(odd) {
+  border-right: 1px solid #dcddda;
+}
+
+.doc-definition span {
+  display: block;
+  margin-bottom: .55cqw;
+  color: #778084;
+  font-size: .65cqw;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.doc-definition strong,
+.doc-definition p {
+  margin: 0;
+  font-size: .92cqw;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.doc-prose {
+  padding: 1.5cqw .8cqw;
+  font-family: var(--font-serif);
+  font-size: 1.05cqw;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.doc-footer {
+  position: absolute;
+  right: 7.8%;
+  bottom: 3.2%;
+  left: 7.8%;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 1.2%;
+  border-top: 1px solid #c7cac8;
+  color: #7c8588;
+  font-size: .68cqw;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.doc-footer .page-number {
+  font-variant-numeric: tabular-nums;
+}
+
+#print-root {
+  display: none;
+}
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  html,
+  body {
+    width: auto;
+    margin: 0;
+    background: white;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body > * {
+    display: none !important;
+  }
+  #print-root {
+    display: block !important;
+  }
+  #print-root .document-page {
+    width: 210mm;
+    height: 297mm;
+    min-height: 297mm;
+    padding: 15mm 16.5mm 14mm;
+    break-after: page;
+    box-shadow: none;
+    page-break-after: always;
+  }
+  #print-root .document-page.page-letter {
+    width: 216mm;
+    height: 279mm;
+    min-height: 279mm;
+  }
+  #print-root .doc-table thead {
+    display: table-header-group;
+  }
+  #print-root .document-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}

@@ -1,0 +1,346 @@
+generator client {
+  provider   = "prisma-client-js"
+  output     = "../generated/prisma"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum FormulationStatus {
+  DRAFT
+  REVIEW
+  APPROVED
+  RETIRED
+}
+
+enum MetadataOrigin {
+  MANUAL
+  CALCULATED
+  AI_SUGGESTED
+  VERIFIED
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  REVIEWED
+  VERIFIED
+}
+
+enum RevisionSource {
+  MANUAL
+  AI
+  IMPORT
+  RESTORE
+  SYSTEM
+}
+
+enum AIInteractionStatus {
+  PENDING
+  COMPLETED
+  REJECTED
+  ACCEPTED
+  FAILED
+  CANCELLED
+}
+
+model Formulation {
+  id                 String                  @id @default(uuid()) @db.Uuid
+  schemaVersion      Int                     @default(1)
+  code               String                  @unique @db.VarChar(80)
+  title              String                  @db.VarChar(240)
+  shortTitle         String?                 @db.VarChar(160)
+  technicalName      String?                 @db.VarChar(320)
+  subtitle           String?                 @db.VarChar(320)
+  description        String?
+  coverImageData     String?
+  coverImageMime     String?                 @db.VarChar(80)
+  coverImageAlt      String?                 @db.VarChar(240)
+  category           String?                 @db.VarChar(120)
+  formType           String?                 @db.VarChar(120)
+  presentation       String?                 @db.VarChar(200)
+  route              String?                 @db.VarChar(120)
+  status             FormulationStatus       @default(DRAFT)
+  favorite           Boolean                 @default(false)
+  documentDate       DateTime?               @db.Date
+  revisionNumber     Int                     @default(1)
+  batchTotal         Decimal?                @db.Decimal(20, 6)
+  batchUnit          String?                 @db.VarChar(32)
+  containerCount     Int?
+  amountPerContainer Decimal?                @db.Decimal(20, 6)
+  containerUnit      String?                 @db.VarChar(32)
+  quantitativeMap    Json?
+  technicalNotes     String?
+  storageNotes       String?
+  archivedAt         DateTime?
+  collectionId       String?                 @db.Uuid
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  collection         Collection?             @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  ingredients        FormulationIngredient[]
+  tags               FormulationTag[]
+  revisions          Revision[]
+  references         Reference[]
+  qualityRecords     QualityControlRecord[]
+  processMetadata    ProcessMetadata[]
+  labelingFields     LabelingField[]
+  attachments        Attachment[]
+  packaging          Packaging?
+  documentSettings   DocumentSettings?
+  aiInteractions     AIInteraction[]
+
+  @@index([updatedAt])
+  @@index([status, archivedAt])
+  @@index([favorite])
+  @@index([collectionId])
+  @@index([title])
+  @@index([technicalName])
+}
+
+model Ingredient {
+  id                        String                  @id @default(uuid()) @db.Uuid
+  canonicalName             String                  @db.VarChar(240)
+  technicalName             String?                 @db.VarChar(320)
+  pharmacopoeialDesignation String?                 @db.VarChar(320)
+  cas                       String?                 @db.VarChar(32)
+  molecularFormula          String?                 @db.VarChar(160)
+  synonyms                  String[]
+  classification            String?                 @db.VarChar(160)
+  commonRoles               String[]
+  physicalForm              String?                 @db.VarChar(120)
+  grade                     String?                 @db.VarChar(120)
+  micronization             String?                 @db.VarChar(120)
+  notes                     String?
+  source                    String?
+  metadataOrigin            MetadataOrigin          @default(MANUAL)
+  verificationStatus        VerificationStatus      @default(UNVERIFIED)
+  createdAt                 DateTime                 @default(now())
+  updatedAt                 DateTime                 @updatedAt
+  formulations              FormulationIngredient[]
+
+  @@index([canonicalName])
+  @@index([technicalName])
+  @@index([cas])
+}
+
+model FormulationIngredient {
+  id                          String             @id @default(uuid()) @db.Uuid
+  formulationId               String             @db.Uuid
+  ingredientId                String?            @db.Uuid
+  position                    Int                @default(0)
+  commonName                  String             @db.VarChar(240)
+  technicalName               String?            @db.VarChar(320)
+  pharmacopoeialDesignation   String?            @db.VarChar(320)
+  cas                         String?            @db.VarChar(32)
+  molecularFormula            String?            @db.VarChar(160)
+  synonyms                    String[]
+  role                        String?            @db.VarChar(160)
+  physicalForm                String?            @db.VarChar(120)
+  grade                       String?            @db.VarChar(120)
+  micronization               String?            @db.VarChar(120)
+  percentageWW                Decimal?           @db.Decimal(12, 6)
+  batchQuantity               Decimal?           @db.Decimal(20, 6)
+  batchUnit                   String?            @db.VarChar(32)
+  unitQuantity                Decimal?           @db.Decimal(20, 6)
+  unitQuantityUnit            String?            @db.VarChar(32)
+  notes                       String?
+  source                      String?
+  metadataOrigin              MetadataOrigin     @default(MANUAL)
+  verificationStatus          VerificationStatus @default(UNVERIFIED)
+  createdAt                   DateTime           @default(now())
+  updatedAt                   DateTime           @updatedAt
+  formulation                 Formulation        @relation(fields: [formulationId], references: [id], onDelete: Cascade)
+  ingredient                  Ingredient?        @relation(fields: [ingredientId], references: [id], onDelete: SetNull)
+
+  @@unique([formulationId, position])
+  @@index([formulationId])
+  @@index([ingredientId])
+  @@index([cas])
+}
+
+model Collection {
+  id           String        @id @default(uuid()) @db.Uuid
+  name         String        @unique @db.VarChar(160)
+  description  String?
+  color        String?       @db.VarChar(32)
+  position     Int           @default(0)
+  archivedAt   DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  formulations Formulation[]
+}
+
+model Tag {
+  id             String           @id @default(uuid()) @db.Uuid
+  name           String           @unique @db.VarChar(80)
+  normalizedName String           @unique @db.VarChar(80)
+  createdAt      DateTime         @default(now())
+  formulations   FormulationTag[]
+}
+
+model FormulationTag {
+  formulationId String      @db.Uuid
+  tagId         String      @db.Uuid
+  formulation   Formulation @relation(fields: [formulationId], references: [id], onDelete: Cascade)
+  tag           Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([formulationId, tagId])
+  @@index([tagId])
+}
+
+model Revision {
+  id             String         @id @default(uuid()) @db.Uuid
+  formulationId  String         @db.Uuid
+  revisionNumber Int
+  source         RevisionSource @default(MANUAL)
+  modifiedFields String[]
+  previousValues Json
+  snapshot       Json?
+  note           String?
+  createdAt      DateTime       @default(now())
+  formulation    Formulation    @relation(fields: [formulationId], references: [id], onDelete: Cascade)
+
+  @@index([formulationId, createdAt])
+}
+
+model Reference {
+  id            String      @id @default(uuid()) @db.Uuid
+  formulationId String      @db.Uuid
+  position      Int         @default(0)
+  title         String      @db.VarChar(500)
+  locator       String?     @db.VarChar(320)
+  url           String?     @db.VarChar(2048)
+  notes         String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  formulation   Formulation @relation(fields: [formulationId], references: [id], onDelete: Cascade)
+
+  @@index([formulationId, position])
+}
+
+model QualityControlRecord {
+  id            String      @id @default(uuid()) @db.Uuid
+  formulationId String      @db.Uuid
+  position      Int         @default(0)
+  metric        String      @db.VarChar(200)
+  operator      String?     @db.VarChar(32)
+  targetValue   String?     @db.VarChar(160)
+  unit          String?     @db.VarChar(48)
+  samplingPlan  String?
+  notes         String?
+  status        String?     @db.VarChar(80)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  formulation   Formulation @relation(fields: [formulationId], references: [id], onDelete: Cascade)
+
+  @@index([formulationId, position])
+  @@index([metric])
+}
+
+model ProcessMetadata {
+  id             String      @id @default(uuid()) @db.Uuid
+  formulationId  String      @db.Uuid
+  stageOrder     Int         @default(0)
+  stageTitle     String      @db.VarChar(240)
+  equipment      String?     @db.VarChar(240)
+  parameterName  String?     @db.VarChar(160)
+  parameterValue String?     @db.VarChar(240)
+  parameterUnit  String?     @db.VarChar(48)
+  notes          String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  formulation    Formulation @relation(fields: [formulationId], references: [id], onDelete: Cascade)
+
+  @@index([formulationId, stageOrder])
+}
+
+model LabelingField {
+  id            String      @id @default(uuid()) @db.Uuid
+  formulationId String      @db.Uuid
+  position      Int         @default(0)
+  label         String      @db.VarChar(160)
+  value         String?
+  include       Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  formulation   Formulation @relation(fields: [formulationId], references: [id], onDelete: Cascade)
+
+  @@index([formulationId, position])
+}
+
+model Packaging {
+  id                 String      @id @default(uuid()) @db.Uuid
+  formulationId      String      @unique @db.Uuid
+  containerType      String?     @db.VarChar(160)
+  containerMaterial  String?     @db.VarChar(160)
+  containerCount     Int?
+  netContent         String?     @db.VarChar(160)
+  closureType        String?     @db.VarChar(200)
+  sealType           String?     @db.VarChar(200)
+  flowControl        String?     @db.VarChar(200)
+  moistureProtection String?     @db.VarChar(200)
+  lightProtection    String?     @db.VarChar(200)
+  packagingNotes     String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  formulation        Formulation @relation(fields: [formulationId], references: [id], onDelete: Cascade)
+}
+
+model DocumentSettings {
+  id                  String      @id @default(uuid()) @db.Uuid
+  formulationId       String      @unique @db.Uuid
+  language            String      @default("pt-BR") @db.VarChar(16)
+  pageSize            String      @default("A4") @db.VarChar(16)
+  density             String      @default("STANDARD") @db.VarChar(24)
+  showCoverImage      Boolean     @default(true)
+  showProvenance      Boolean     @default(false)
+  showTechnicalNotes  Boolean     @default(true)
+  showCas             Boolean     @default(true)
+  showSynonyms        Boolean     @default(false)
+  showRevisionHistory Boolean     @default(false)
+  sectionOrder        String[]
+  enabledSections     Json
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+  formulation         Formulation @relation(fields: [formulationId], references: [id], onDelete: Cascade)
+}
+
+model Attachment {
+  id            String      @id @default(uuid()) @db.Uuid
+  formulationId String      @db.Uuid
+  filename      String      @db.VarChar(500)
+  mimeType      String      @db.VarChar(160)
+  sizeBytes     Int
+  storageKey    String      @unique @db.VarChar(1024)
+  metadata      Json?
+  createdAt     DateTime    @default(now())
+  formulation   Formulation @relation(fields: [formulationId], references: [id], onDelete: Cascade)
+
+  @@index([formulationId])
+}
+
+model AppSettings {
+  key       String   @id @db.VarChar(160)
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AIInteraction {
+  id             String              @id @default(uuid()) @db.Uuid
+  formulationId  String?             @db.Uuid
+  action         String              @db.VarChar(120)
+  inputSummary   Json?
+  proposal       Json?
+  acceptedFields String[]
+  model          String?             @db.VarChar(240)
+  status         AIInteractionStatus @default(PENDING)
+  errorCode      String?             @db.VarChar(120)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  formulation    Formulation?        @relation(fields: [formulationId], references: [id], onDelete: SetNull)
+
+  @@index([formulationId, createdAt])
+  @@index([status])
+}
